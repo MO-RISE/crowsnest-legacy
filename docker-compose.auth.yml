@@ -1,0 +1,49 @@
+version: "3.8"
+
+services:
+
+  crowsnest-auth:
+    image: ghcr.io/mo-rise/crowsnest-auth:v0.2.0
+    restart: unless-stopped
+
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.crowsnest-auth.rule=PathPrefix(`/auth`)
+      - traefik.http.middlewares.auth-strip.stripprefix.prefixes=/auth
+      - traefik.http.routers.crowsnest-auth.middlewares=auth-strip
+      - traefik.http.middlewares.crowsnest-auth.forwardauth.address=http://crowsnest-auth/verify
+      - traefik.http.middlewares.crowsnest-auth.forwardauth.trustForwardHeader=true
+    environment:
+      - USER_DATABASE_URL=postgresql://${CROWSNEST_AUTH_DB_USER}:${CROWSNEST_AUTH_DB_PASSWORD}@auth_db/${CROWSNEST_AUTH_DB}
+      - ACCESS_COOKIE_DOMAIN=${CROWSNEST_AUTH_COOKIE_DOMAIN}
+      - ACCESS_COOKIE_HTTPONLY=${CROWSNEST_AUTH_ACCESS_COOKIE_HTTPONLY}
+      - ACCESS_TOKEN_EXPIRE_MINUTES=${CROWSNEST_AUTH_ACCESS_TOKEN_EXPIRE_MINUTES}
+      - ADMIN_USER_PASSWORD=${CROWSNEST_AUTH_ADMIN_USER_PASSWORD}
+      - BASE_URL=/auth
+    depends_on:
+      - auth_db
+
+  auth_db:
+    image: "postgres:14.0-alpine"
+    restart: unless-stopped
+    volumes:
+      - db_storage:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=${CROWSNEST_AUTH_DB_USER}
+      - POSTGRES_PASSWORD=${CROWSNEST_AUTH_DB_PASSWORD}
+      - POSTGRES_DB=${CROWSNEST_AUTH_DB}
+
+  emqx:
+    environment:
+      - EMQX_LOADED_PLUGINS="emqx_recon,emqx_retainer,emqx_management,emqx_dashboard,emqx_auth_http"
+      - EMQX_AUTH__HTTP__AUTH_REQ__URL=http://crowsnest-auth/login
+      - EMQX_AUTH__HTTP__AUTH_REQ__METHOD=post
+      - EMQX_AUTH__HTTP__AUTH_REQ__HEADERS__CONTENT-TYPE=application/x-www-form-urlencoded
+      - EMQX_AUTH__HTTP__AUTH_REQ__PARAMS=username=%u,password=%P
+      - EMQX_AUTH__HTTP__SUPER_REQ__URL=
+      - EMQX_AUTH__HTTP__ACL_REQ__URL=http://crowsnest-auth/verify_emqx
+      - EMQX_AUTH__HTTP__ACL_REQ__METHOD=get
+      - EMQX_AUTH__HTTP__ACL_REQ__PARAMS=username=%u,topic=%t
+
+volumes:
+  db_storage:
