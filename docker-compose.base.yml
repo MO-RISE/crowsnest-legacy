@@ -9,14 +9,15 @@ services:
       - "--log.level=DEBUG"
       - "--api.dashboard=true"
       - "--providers.docker=true"
-      - "--providers.docker.exposedbydefault=false"
+      - "--providers.docker.exposedbydefault=true"
+      - "--providers.docker.constraints=Label(`crowsnest.expose`, `true`)"
       - "--entrypoints.web.address=:80"
       - "--entrypoints.mqtt.address=:1883"
       - "--entrypoints.traefik-dashboard.address=:8080"
       - "--entrypoints.emqx-dashboard.address=:8081"
     # Dynamic Configuration
     labels:
-      - "traefik.enable=true"
+      - "crowsnest.expose=true"
       - "traefik.http.routers.traefik-dashboard.rule=(PathPrefix(`/api`) || PathPrefix(`/dashboard`))"
       - "traefik.http.routers.traefik-dashboard.entryPoints=traefik-dashboard"
       - "traefik.http.routers.traefik-dashboard.service=api@internal"
@@ -35,7 +36,7 @@ services:
       - EMQX_NAME=crowsnest
       - EMQX_HOST=127.0.0.1
     labels:
-      - "traefik.enable=true"
+      - "crowsnest.expose=true"
       - "traefik.tcp.routers.emqx-tcp.rule=HostSNI(`*`)"
       - "traefik.tcp.routers.emqx-tcp.entryPoints=mqtt"
       - "traefik.tcp.routers.emqx-tcp.service=emqx-tcp-service"

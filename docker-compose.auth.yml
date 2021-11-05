@@ -7,7 +7,7 @@ services:
     restart: unless-stopped
 
     labels:
-      - traefik.enable=true
+      - crowsnest.expose=true
       - traefik.http.routers.crowsnest-auth.rule=PathPrefix(`/auth`)
       - traefik.http.middlewares.auth-strip.stripprefix.prefixes=/auth
       - traefik.http.routers.crowsnest-auth.middlewares=auth-strip
