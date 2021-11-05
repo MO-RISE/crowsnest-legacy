@@ -49,3 +49,15 @@ services:
       - "traefik.tcp.routers.emqx-dashboard.entryPoints=emqx-dashboard"
       - "traefik.tcp.routers.emqx-dashboard.service=emqx-dashboard-service"
       - "traefik.tcp.services.emqx-dashboard-service.loadbalancer.server.port=18083"
+
+  crowsnest-frontend:
+    image: ghcr.io/mo-rise/crowsnest-frontend
+    restart: unless-stopped
+    environment:
+      - MQTT_BROKER_URL=ws://emqx:8083
+    labels:
+      - "crowsnest.expose=true"
+      - "traefik.http.routers.crowsnest-frontend.rule=PathPrefix(`/`)"
+      - "traefik.http.routers.crowsnest-frontend.entryPoints=web"
+      - "traefik.http.routers.crowsnest-frontend.service=crowsnest-frontend-service"
+      - "traefik.http.services.crowsnest-frontend-service.loadbalancer.server.port=80"

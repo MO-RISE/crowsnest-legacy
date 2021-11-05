@@ -45,5 +45,9 @@ services:
       - EMQX_AUTH__HTTP__ACL_REQ__METHOD=get
       - EMQX_AUTH__HTTP__ACL_REQ__PARAMS=username=%u,topic=%t
 
+  crowsnest-frontend:
+    labels:
+      - traefik.http.routers.crowsnest-frontend.middlewares=crowsnest-auth
+
 volumes:
   db_storage:
