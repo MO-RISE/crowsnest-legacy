@@ -3,7 +3,7 @@ version: "3.8"
 services:
 
   crowsnest-auth:
-    image: ghcr.io/mo-rise/crowsnest-auth:v0.2.0
+    image: ghcr.io/mo-rise/crowsnest-auth
     restart: unless-stopped
 
     labels:
@@ -44,10 +44,6 @@ services:
       - EMQX_AUTH__HTTP__ACL_REQ__URL=http://crowsnest-auth/verify_emqx
       - EMQX_AUTH__HTTP__ACL_REQ__METHOD=get
       - EMQX_AUTH__HTTP__ACL_REQ__PARAMS=username=%u,topic=%t
-
-  crowsnest-frontend:
-    labels:
-      - traefik.http.routers.crowsnest-frontend.middlewares=crowsnest-auth
 
 volumes:
   db_storage:
