@@ -29,8 +29,24 @@ As an onboard platform, `crowsnest` will (eventually) allow:
 * Modular frontend
 * Simplistic developer experience
 
-It leverages [brefv](https://github.com/MO-RISE/brefv) as the data message format to ensure interoperability and readability.
+## Messaging solution
+`crowsnest` leverages [MQTT](https://mqtt.org/) as its main messaging protocol, more specifically it tries to make use of MQTT v5.0 as much as possible to take advantage of the latest developments.
 
+### Message format
+`crowsnest` leverages [brefv](https://github.com/MO-RISE/brefv) as the data message format to ensure interoperability and readability.
+
+### Topic structure
+All microservices operating within a `crowsnest` ecosystem should adhere to the following topic structure:
+```console
+/<parent_type>/<parent_id>/<child_type>/<child_subtype>/<child_id>
+```
+As an example, a microservice interacting with a LIDAR sensor onboard the ship would publish its observations on the followig topic:
+```console
+/ship/<some_unique_id_for_this_ship>/observations/lidar/0
+```
+the `0` (zero) at the end signals that this is the first (of potentially several) lidar observers onboard this ship.
+
+## Architecture
 **TODO** - diagrams
 
 
