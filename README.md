@@ -2,7 +2,7 @@
 
 # crowsnest
 
-A reaserch platform for the digitalization of maritime operations
+A reaserch platform for the digitalization of maritime operations.
 
 ## Overview
 
