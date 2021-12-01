@@ -2,11 +2,11 @@
 
 # crowsnest
 
-A maritime monitoring solution.
+A reaserch platform for the digitalization of maritime operations
 
 ## Overview
 
-`crowsnest` is a microservice-based application with the main focus of being a reasearch platform for maritime operations.
+`crowsnest` is a microservice-based platform for researching digital solutions for maritime operations.
 
 As a shore center, `crowsnest` will (eventually) allow:
 
